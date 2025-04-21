@@ -1,0 +1,38 @@
+/* Center the login & register card */
+body {
+    background: #f4f4f9;
+}
+
+.card {
+    border-radius: 15px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+    transform: scale(1.03);
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Fields */
+.form-control {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+}
+
+/* Buttons */
+.btn {
+    border-radius: 8px;
+    padding: 10px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+/* Add hover effect to buttons */
+.btn-primary:hover {
+    background-color: #0077cc;
+}
+
+.btn-success:hover {
+    background-color: #28a745;
+}

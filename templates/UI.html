@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Meter</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-purple: #49243E;
+            --medium-purple: #704264;
+            --mauve: #BB8493;
+            --peach: #DBAFA0;
+            --light-bg: #f8f1f3;
+            
+            /* Dark mode variables - now using dark grey shades */
+            --dark-bg: #121212;
+            --dark-card: #1e1e1e;
+            --dark-text: #e0e0e0;
+            --dark-secondary: #2d2d2d;
+            --dark-border: #333333;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 60px; /* Space for dark mode button */
+        }
+        
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .card {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+        
+        .dark-mode .card-footer {
+            background-color: var(--dark-secondary) !important;
+            border-top: 1px solid var(--dark-border);
+        }
+        
+        .dark-mode .form-control,
+        .dark-mode .form-select,
+        .dark-mode .autocomplete-dropdown {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+        
+        .dark-mode .form-control::placeholder {
+            color: #b0b0b0;
+        }
+        
+        .dark-mode .text-muted {
+            color: #a8a8a8 !important;
+        }
+        
+        .dark-mode .autocomplete-dropdown {
+            background-color: var(--dark-card);
+            border-color: var(--dark-border);
+        }
+        
+        .dark-mode .autocomplete-item {
+            border-bottom-color: var(--dark-secondary);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .autocomplete-item:hover {
+            background-color: var(--dark-secondary);
+        }
+        
+        /* Dark mode button styles */
+        .dark-mode-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--medium-purple);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .dark-mode .dark-mode-btn {
+            background-color: var(--dark-purple);
+            color: var(--white);
+        }
+        
+        /* Button colors in dark mode */
+        .dark-mode .btn-outline-primary {
+            color: var(--mauve); 
+            border-color: var(--mauve);
+        }
+        
+        .dark-mode .btn-outline-primary:hover {
+            background-color: var(--medium-purple);  /* Change this from var(--peach) to var(--mauve) */
+            border-color: var(--medium-purple);
+            color: var(--white);
+        }
+        
+        .dark-mode .btn-primary {
+            background-color: var(--mauve);
+            border-color: var(--mauve);
+        }
+        
+        .dark-mode .btn-primary:hover {
+            background-color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        /* Navbar remains the same in both modes */
+        .navbar {
+            background-color: var(--dark-purple) !important;
+        }
+        
+        .btn-outline-light {
+            color: var(--peach);
+            border-color: var(--peach);
+        }
+        
+        .btn-outline-light:hover {
+            background-color: var(--medium-purple);
+            color: white;
+        }
+        
+        .badge.bg-primary {
+            background-color: var(--medium-purple) !important;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-img-top.bg-secondary {
+            background-color: var(--mauve) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-purple);
+            border-color: var(--dark-purple);
+        }
+        
+        .btn-outline-primary {
+            color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--medium-purple);
+            color: white;
+        }
+        
+        .text-muted {
+            color: var(--mauve) !important;
+            font-style: italic;
+        }
+        
+        .toast {
+            border-left: 4px solid var(--medium-purple);
+        }
+        
+        .toast-header {
+            background-color: var(--peach);
+            color: var(--dark-purple);
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid var(--mauve);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--medium-purple);
+            box-shadow: 0 0 0 0.25rem rgba(187, 132, 147, 0.25);
+        }
+
+        /* Autocomplete styles */
+        .autocomplete-dropdown {
+            position: absolute;
+            width: 100%;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 1000;
+            background: white;
+            border: 1px solid var(--mauve);
+            border-radius: 0 0 5px 5px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+        }
+
+        .autocomplete-item {
+            padding: 10px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+
+        .autocomplete-item:hover {
+            background-color: var(--light-bg);
+        }
+
+        .autocomplete-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Movie Meter</a>
+            <div class="d-flex">
+                <a href="{{ url_for('trending_movies') }}" class="btn btn-outline-light me-2">Trending</a>
+                <a href="{{ url_for('stats') }}" class="btn btn-outline-light me-2">Stats</a>
+                <a href="{{ url_for('favourites_page') }}" class="btn btn-outline-light me-2 position-relative">
+                    View Favourites
+                    {% if current_user.id in favourites and favourites[current_user.id] %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: var(--mauve);">
+                            {{ favourites[current_user.id]|length }}
+                        </span>
+                    {% endif %}
+                </a>
+                <a href="{{ url_for('faq') }}" class="btn btn-outline-light me-2">FAQ</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="row mb-4">
+            <div class="col-md-8 position-relative">
+                <input type="text" id="search" class="form-control" placeholder="Search for a movie..." autocomplete="off">
+                <div id="autocomplete-results" class="autocomplete-dropdown"></div>
+            </div>
+            <div class="col-md-4">
+                <select id="filter" class="form-select">
+                    <option value="">All Genres</option>
+                    <option value="Animation">Animation</option>
+                    <option value="Comedy">Comedy</option>
+                    <option value="Family">Family</option>
+                    <option value="Action">Action</option>
+                    <option value="Drama">Drama</option>
+                    <option value="Romance">Romance</option>
+                    <option value="Adventure">Adventure</option>
+                    <option value="Thriller">Thriller</option>
+                    <option value="Crime">Crime</option>
+                    <option value="Fantasy">Fantasy</option>
+                    <option value="Science Fiction">Science Fiction</option>
+                    <option value="Horror">Horror</option>
+                    <option value="Music">Music</option>
+                    <option value="Mystery">Mystery</option>
+                </select>
+            </div>
+        </div>
+        
+        <div id="movie-list" class="row row-cols-1 row-cols-md-3 g-4"></div>
+    </div>
+    
+    <!-- Dark Mode Button -->
+    <button id="darkModeBtn" class="dark-mode-btn">
+        <i class="fas fa-moon"></i>
+    </button>
+    
+    <script>
+        // Dark mode functionality
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        const body = document.body;
+        
+        // Check for saved user preference
+        if (localStorage.getItem('darkMode') === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+        }
+        
+        // Toggle dark mode
+        darkModeBtn.addEventListener('click', () => {
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                darkModeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('darkMode', 'disabled');
+            } else {
+                body.classList.add('dark-mode');
+                darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('darkMode', 'enabled');
+            }
+        });
+
+        // Rest of your existing JavaScript
+        const searchInput = document.getElementById("search");
+        const filterSelect = document.getElementById("filter");
+        const movieList = document.getElementById("movie-list");
+        let allMovies = [];
+        let debounceTimer;
+
+        function fetchAllMovies() {
+            fetch('/movies')
+                .then(response => response.json())
+                .then(movies => {
+                    allMovies = movies;
+                    displayMovies(movies.slice(0, 50));
+                })
+                .catch(error => console.error('Error loading movies:', error));
+        }
+
+        function displayMovies(movies) {
+            movieList.innerHTML = "";
+            if (movies.length === 0) {
+                movieList.innerHTML = '<div class="col-12 text-center text-muted py-5">No movies found matching your search</div>';
+                return;
+            }
+            
+            movies.forEach(movie => {
+                const movieCard = document.createElement("div");
+                movieCard.classList.add("col");
+                movieCard.innerHTML = `
+                    <div class="card h-100">
+                        ${movie.poster_path ? 
+                            `<img src="https://image.tmdb.org/t/p/w500${movie.poster_path}" class="card-img-top" alt="${movie.title}">` : 
+                            `<div class="card-img-top bg-secondary d-flex align-items-center justify-content-center">
+                                <span class="text-white">No poster available</span>
+                            </div>`
+                        }
+                        <div class="card-body">
+                            <h5 class="card-title">${movie.title}</h5>
+                            <div class="d-flex justify-content-between mb-2">
+                                <span class="badge bg-primary">⭐ ${movie.vote_average}</span>
+                                <span>${movie.runtime} min</span>
+                            </div>
+                            <p class="card-text text-muted">${movie.tagline || ''}</p>
+                            <p class="card-text">${movie.overview.substring(0, 100)}${movie.overview.length > 100 ? '...' : ''}</p>
+                        </div>
+                        <div class="card-footer bg-white">
+                            <div class="d-grid gap-2">
+                                <button onclick="window.location.href='/movie/${movie.id}'" class="btn btn-primary">View Details</button>
+                                <button onclick="addToFavourites(${movie.id}, '${escapeSingleQuotes(movie.title)}')" class="btn btn-outline-primary">Add to Favourites</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                movieList.appendChild(movieCard);
+            });
+        }
+
+        function fetchMovies() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                const searchText = searchInput.value.toLowerCase();
+                const filterValue = filterSelect.value;
+                
+                fetch(`/movies?search=${searchText}&filter=${filterValue}`)
+                    .then(response => response.json())
+                    .then(displayMovies)
+                    .catch(error => console.error('Error searching movies:', error));
+            }, 300);
+        }
+
+        function showAutocompleteResults(searchText) {
+            const resultsContainer = document.getElementById('autocomplete-results');
+            resultsContainer.innerHTML = '';
+            
+            if (searchText.length < 2) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            const filtered = allMovies.filter(movie => 
+                movie.title.toLowerCase().includes(searchText.toLowerCase())
+            ).slice(0, 5);
+            
+            if (filtered.length === 0) {
+                resultsContainer.style.display = 'none';
+                return;
+            }
+            
+            filtered.forEach(movie => {
+                const item = document.createElement('div');
+                item.className = 'autocomplete-item';
+                item.textContent = movie.title;
+                item.addEventListener('click', () => {
+                    searchInput.value = movie.title;
+                    resultsContainer.style.display = 'none';
+                    fetchMovies();
+                });
+                resultsContainer.appendChild(item);
+            });
+            
+            resultsContainer.style.display = 'block';
+        }
+
+        function escapeSingleQuotes(str) {
+            return str.replace(/'/g, "\\'");
+        }
+
+        function addToFavourites(movieId, movieTitle) {
+            fetch(`/add_favourite/${movieId}`, {method: 'POST'})
+                .then(response => response.text())
+                .then(data => {
+                    const toastElement = document.getElementById('liveToast');
+                    const toastBody = toastElement.querySelector('.toast-body');
+                    toastBody.textContent = `${movieTitle} added to favourites!`;
+                    const toast = new bootstrap.Toast(toastElement);
+                    toast.show();
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        searchInput.addEventListener("input", () => {
+            const searchText = searchInput.value.toLowerCase();
+            showAutocompleteResults(searchText);
+            fetchMovies();
+        });
+
+        filterSelect.addEventListener("change", fetchMovies);
+
+        document.addEventListener('click', (e) => {
+            if (e.target.id !== 'search') {
+                document.getElementById('autocomplete-results').style.display = 'none';
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", fetchAllMovies);
+    </script>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Movie Meter</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <!-- Message will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

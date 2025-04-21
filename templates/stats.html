@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Stats</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --dark-purple: #49243E;
+            --medium-purple: #704264;
+            --mauve: #BB8493;
+            --peach: #DBAFA0;
+            --light-bg: #f8f1f3;
+            
+            /* Dark mode variables */
+            --dark-bg: #121212;
+            --dark-card: #1e1e1e;
+            --dark-text: #e0e0e0;
+            --dark-secondary: #2d2d2d;
+            --dark-border: #333333;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            font-family: 'Poppins', sans-serif;
+            transition: background-color 0.3s ease;
+            position: relative;
+            min-height: 100vh;
+            padding-bottom: 60px; /* Space for dark mode button */
+        }
+        
+        body.dark-mode {
+            background-color: var(--dark-bg);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .card {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+        
+        .dark-mode .form-control,
+        .dark-mode .form-select {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-color: var(--dark-border);
+        }
+        
+        .dark-mode .form-control::placeholder {
+            color: #b0b0b0;
+        }
+        
+        .dark-mode .text-muted {
+            color: #a8a8a8 !important;
+        }
+        
+        /* Dark mode button styles */
+        .dark-mode-btn {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: var(--medium-purple);
+            color: white;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .dark-mode-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .dark-mode .dark-mode-btn {
+            background-color: var(--dark-purple);
+            color: var(--white);
+        }
+        
+        /* Button colors in dark mode */
+        .dark-mode .btn-outline-primary {
+            color: var(--mauve); 
+            border-color: var(--mauve);
+        }
+        
+        .dark-mode .btn-outline-primary:hover {
+            background-color: var(--medium-purple);
+            border-color: var(--medium-purple);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .btn-primary {
+            background-color: var(--mauve);
+            border-color: var(--mauve);
+        }
+        
+        .dark-mode .btn-primary:hover {
+            background-color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        /* Navbar remains the same in both modes */
+        .navbar {
+            background-color: var(--dark-purple) !important;
+        }
+        
+        .btn-outline-light {
+            color: var(--peach);
+            border-color: var(--peach);
+        }
+        
+        .btn-outline-light:hover {
+            background-color: var(--medium-purple);
+            color: white;
+        }
+        
+        .btn-outline-secondary {
+            color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        .btn-outline-secondary:hover {
+            background-color: var(--medium-purple);
+            color: white;
+        }
+
+        .dark-mode .btn-outline-secondary {
+            color: var(--mauve);
+            border-color: var(--mauve);
+        }
+
+        .dark-mode .btn-outline-secondary:hover {
+            background-color: var(--mauve);
+            color: var(--dark-text);
+        }
+        
+        .badge.bg-primary {
+            background-color: var(--medium-purple) !important;
+        }
+        
+        .card {
+            border: none;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-img-top.bg-secondary {
+            background-color: var(--mauve) !important;
+        }
+        
+        .btn-primary {
+            background-color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--dark-purple);
+            border-color: var(--dark-purple);
+        }
+        
+        .btn-outline-primary {
+            color: var(--medium-purple);
+            border-color: var(--medium-purple);
+        }
+        
+        .btn-outline-primary:hover {
+            background-color: var(--medium-purple);
+            color: white;
+        }
+        
+        .text-muted {
+            color: var(--mauve) !important;
+            font-style: italic;
+        }
+        
+        .toast {
+            border-left: 4px solid var(--medium-purple);
+        }
+        
+        .toast-header {
+            background-color: var(--peach);
+            color: var(--dark-purple);
+        }
+        
+        .dark-mode .toast-header {
+            background-color: var(--dark-secondary);
+            color: var(--dark-text);
+        }
+        
+        .dark-mode .toast {
+            background-color: var(--dark-card);
+            color: var(--dark-text);
+            border-left-color: var(--mauve);
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid var(--mauve);
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--medium-purple);
+            box-shadow: 0 0 0 0.25rem rgba(187, 132, 147, 0.25);
+        }
+
+        /* STATS PAGE SPECIFIC STYLES */
+        .stats-container {
+            max-width: 900px;
+            margin: 40px auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        
+        .dark-mode .stats-container {
+            background-color: var(--dark-card);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+    
+        h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--dark-purple);
+            transition: color 0.3s ease;
+        }
+        
+        .dark-mode h2 {
+            color: var(--mauve);
+        }
+    
+        #statsChart {
+            width: 100% !important;
+            height: 400px !important;
+        }
+        
+        /* Dark mode chart text colors */
+        .dark-mode .chartjs-render-monitor text {
+            fill: var(--dark-text) !important;
+        }
+        
+        .dark-mode .chartjs-grid line {
+            stroke: var(--dark-border) !important;
+        }
+        
+        .dark-mode .chartjs-grid text {
+            fill: var(--dark-text) !important;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('home') }}">Movie Meter</a>
+            <div class="d-flex">
+                <a href="{{ url_for('trending_movies') }}" class="btn btn-outline-light me-2">Trending</a>
+                <a href="{{ url_for('stats') }}" class="btn btn-outline-light me-2">Stats</a>
+                <a href="{{ url_for('favourites_page') }}" class="btn btn-outline-light me-2 position-relative">
+                    View Favourites
+                    {% if current_user.id in favourites and favourites[current_user.id] %}
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill" style="background-color: var(--mauve);">
+                            {{ favourites[current_user.id]|length }}
+                        </span>
+                    {% endif %}
+                </a>
+                <a href="{{ url_for('faq') }}" class="btn btn-outline-light me-2">FAQ</a>
+                <a href="{{ url_for('logout') }}" class="btn btn-outline-light">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="mb-4">
+            <a href="{{ url_for('home') }}" class="btn btn-outline-secondary">Back to Home</a>
+        </div>
+
+        <div class="stats-container">
+            <h2>User Ratings vs TMDB Vote Average</h2>
+
+            {% if stats %}
+                <!-- Chart Canvas -->
+                <canvas id="statsChart"></canvas>
+
+                <!-- Embedded JSON Data -->
+                <script id="stats-data" type="application/json">
+                    {{ stats | tojson | safe }}
+                </script>
+
+                <!-- Chart Rendering -->
+                <script>
+                    // Dark mode functionality
+                    const darkModeBtn = document.createElement('button');
+                    darkModeBtn.id = 'darkModeBtn';
+                    darkModeBtn.className = 'dark-mode-btn';
+                    darkModeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                    document.body.appendChild(darkModeBtn);
+                    
+                    const body = document.body;
+                    
+                    // Check for saved user preference
+                    if (localStorage.getItem('darkMode') === 'enabled') {
+                        body.classList.add('dark-mode');
+                        darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                    }
+                    
+                    // Toggle dark mode
+                    darkModeBtn.addEventListener('click', () => {
+                        if (body.classList.contains('dark-mode')) {
+                            body.classList.remove('dark-mode');
+                            darkModeBtn.innerHTML = '<i class="fas fa-moon"></i>';
+                            localStorage.setItem('darkMode', 'disabled');
+                        } else {
+                            body.classList.add('dark-mode');
+                            darkModeBtn.innerHTML = '<i class="fas fa-sun"></i>';
+                            localStorage.setItem('darkMode', 'enabled');
+                        }
+                        // Update chart colors when toggling dark mode
+                        if (window.statsChart) {
+                            updateChartColors();
+                        }
+                    });
+
+                    const dataElement = document.getElementById('stats-data');
+                    const data = JSON.parse(dataElement.textContent);
+
+                    const labels = data.map(item => item.title);
+                    const userRatings = data.map(item => item.avg_rating);
+                    const voteAverages = data.map(item => item.vote_average);
+
+                    const ctx = document.getElementById('statsChart').getContext('2d');
+                    window.statsChart = new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [
+                                {
+                                    label: 'User Review Avg',
+                                    data: userRatings,
+                                    backgroundColor: 'rgba(112, 66, 100, 0.7)'
+                                },
+                                {
+                                    label: 'TMDB Vote Avg',
+                                    data: voteAverages,
+                                    backgroundColor: 'rgba(219, 175, 160, 0.7)'
+                                }
+                            ]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 10,
+                                    grid: {
+                                        color: function(context) {
+                                            return body.classList.contains('dark-mode') ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                                        }
+                                    },
+                                    ticks: {
+                                        color: function(context) {
+                                            return body.classList.contains('dark-mode') ? '#e0e0e0' : '#666';
+                                        }
+                                    }
+                                },
+                                x: {
+                                    grid: {
+                                        display: false
+                                    },
+                                    ticks: {
+                                        color: function(context) {
+                                            return body.classList.contains('dark-mode') ? '#e0e0e0' : '#666';
+                                        }
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    labels: {
+                                        font: {
+                                            family: 'Poppins'
+                                        },
+                                        color: function(context) {
+                                            return body.classList.contains('dark-mode') ? '#e0e0e0' : '#666';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+
+                    // Function to update chart colors when toggling dark mode
+                    function updateChartColors() {
+                        const isDarkMode = body.classList.contains('dark-mode');
+                        
+                        // Update scales colors
+                        window.statsChart.options.scales.y.grid.color = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+                        window.statsChart.options.scales.y.ticks.color = isDarkMode ? '#e0e0e0' : '#666';
+                        window.statsChart.options.scales.x.ticks.color = isDarkMode ? '#e0e0e0' : '#666';
+                        
+                        // Update legend colors
+                        window.statsChart.options.plugins.legend.labels.color = isDarkMode ? '#e0e0e0' : '#666';
+                        
+                        window.statsChart.update();
+                    }
+                </script>
+            {% else %}
+                <p class="text-center text-muted">No review data available yet. Submit a review for a trending movie to see stats!</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">
+        <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+                <strong class="me-auto">Movie Meter</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">
+                <!-- Message will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

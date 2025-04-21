@@ -1,0 +1,9 @@
+Dependencies:
+
+flask
+flask-login
+flask-bcrypt
+flask-wtf
+
+pytest
+unittest
